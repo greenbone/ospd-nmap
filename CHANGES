@@ -1,0 +1,21 @@
+SUMMARY OF RELEASE CHANGES FOR OSPD-NMAP
+========================================
+
+For detailed code changes, please visit
+ https://github.com/greenbone/ospd-nmap/commits/master
+or get the entire source code repository and view log history:
+$ git clone https://github.com/greenbone/ospd-nmap.git
+$ cd ospd-nmap && git log
+
+
+ospd-nmap 1.0b1 (2015-10-16)
+
+This is the first public beta release of ospd-nmap for the Open
+Vulnerability Assessment System (OpenVAS).
+
+OSPd-nmap is an OSP server implementation to allow OpenVAS to
+start the nmap tool via command-line, and parse the results.
+
+Many thanks to everyone who contributed to this release:
+Jan-Oliver Wagner.
+
