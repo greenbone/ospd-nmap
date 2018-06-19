@@ -124,9 +124,9 @@ TIMING_ARGS = [
 ]
 
 SCANTYPE_ARGS = [
-    'SYN',
     'Connect()',
     'SYN',
+    'Connect()',
     'ACK',
     'FIN',
     'Window',
