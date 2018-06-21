@@ -22,11 +22,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import xml.etree.ElementTree as ET
+import subprocess
+
 from ospd.ospd import OSPDaemon, OSPDError
 from ospd.misc import main as daemon_main
 from ospd_nmap import __version__
-import xml.etree.ElementTree as ET
-import subprocess
 
 OSPD_DESC = """
 This scanner runs the tool 'nmap' to scan the target hosts.
@@ -48,7 +49,6 @@ OSDET_DIC = {
     'Enable' : '-O',
     'Guess' : '--osscan-guess',
     'Limit' : '--osscan-limit',
-    'Disable' : 'Disable',
 }
 
 TIMING_DIC = {
@@ -59,7 +59,6 @@ TIMING_DIC = {
     'Normal':'-T3',
     'Aggressive':'-T4',
     'Insane':'-T5',
-    'Disable' : 'Disable',
 }
 
 SCANTYPE_DIC = {
@@ -305,10 +304,10 @@ class OSPDnmap(OSPDaemon):
     def process_scan_params(self, params):
         """ params is directly from the XML """
         for param in OSPD_PARAMS:
-            if param in ('dumpxml','allhoston','traceroute','nodns','servscan',
-                         'fragmentip','sourceport','htimeout','minrtttimeout',
-                         'maxrtttimeout','initrtttimeout','minportpar',
-                         'maxportpar','minhostpar','maxhostpar',
+            if param in ('dumpxml', 'allhoston', 'traceroute', 'nodns', 'servscan',
+                         'fragmentip', 'sourceport', 'htimeout', 'minrtttimeout',
+                         'maxrtttimeout', 'initrtttimeout', 'minportpar',
+                         'maxportpar', 'minhostpar', 'maxhostpar',
                          'interprobedelay',):
                 continue
             if not params.get(param):
@@ -328,7 +327,7 @@ class OSPDnmap(OSPDaemon):
         if result is None:
             return False
 
-        tree = ET.fromstring(result);
+        tree = ET.fromstring(result)
 
         if tree.tag != 'nmaprun':
             return False
@@ -364,7 +363,7 @@ class OSPDnmap(OSPDaemon):
 
         ## Add all enabled options
         ### All boole options
-        for opt in ('allhoston','traceroute','nodns','servscan','fragmentip',):
+        for opt in ('allhoston', 'traceroute', 'nodns', 'servscan', 'fragmentip',):
             if options.get(opt):
                 command_str.append(BOOL_OPT_DIC[opt])
 
@@ -384,13 +383,13 @@ class OSPDnmap(OSPDaemon):
                 command_str.append(OSDET_DIC[os_detection])
 
         ### Add all integer options
-        for opt in ('minportpar','maxportpar','minhostpar','sourceport','maxhostpar',):
+        for opt in ('minportpar', 'maxportpar', 'minhostpar', 'sourceport', 'maxhostpar',):
             if options.get(opt) != 0:
                 command_str.append(str(INT_OPT_DIC[opt]))
                 command_str.append(str(options.get(opt)))
 
                 ### Add all integer options
-        for opt in ('htimeout','minrtttimeout','maxrtttimeout','initrtttimeout',
+        for opt in ('htimeout', 'minrtttimeout', 'maxrtttimeout', 'initrtttimeout',
                     'interprobedelay',):
             if options.get(opt) != 0:
                 #for elem in []
@@ -421,7 +420,7 @@ class OSPDnmap(OSPDaemon):
             return 2
 
         # If "dump" was set to True, then create a log entry with the dump.
-        if dump == 1 :
+        if dump == 1:
             self.add_scan_log(scan_id, host=target, name='Nmap dump',
                               value='Raw nmap output:\n\n%s' % result)
 
@@ -431,7 +430,7 @@ class OSPDnmap(OSPDaemon):
         ports = []
 
         # parse the output of the nmap command
-        tree = ET.fromstring(result);
+        tree = ET.fromstring(result)
         if tree.find("host/ports") is not None:
             for port in tree.find("host/ports"):
                 aux_list = []
@@ -456,8 +455,8 @@ class OSPDnmap(OSPDaemon):
         # It is important to send at least one result, else
         # the host details won't be stored.
         self.add_scan_log(scan_id, host=target, name='Nmap summary',
-                            value='Via Nmap %d tcp ports and %d udp were found.'
-                            % (len(tcp_ports), len(udp_ports)))
+                          value='Via Nmap %d tcp ports and %d udp were found.'
+                          % (len(tcp_ports), len(udp_ports)))
 
         # Create a log entry for OS detected
         if os_detection != 'Disable' and (tree.find("host/os") is not None):
@@ -478,7 +477,7 @@ class OSPDnmap(OSPDaemon):
                     hopttl = opsys.attrib.get('ttl')
                     hopaddr = opsys.attrib.get('ipaddr')
                 tracert = '%s%s' % (tracert,
-                                    'ttl= {0} ipaddr={1} \n'.format(hopttl,hopaddr))
+                                    'ttl= {0} ipaddr={1} \n'.format(hopttl, hopaddr))
             if tracert != '':
                 self.add_scan_log(scan_id, host=target, name='Traceroute',
                                   value=tracert)
@@ -501,9 +500,9 @@ class OSPDnmap(OSPDaemon):
                                   port='{0}/{1}'.format(found_port[1],
                                                         found_port[0]))
             elif len(found_port) > 3 and found_port[3] != 'none' and found_port[2] != 'closed':
-                 self.add_scan_log(scan_id, host=target,
-                                  name ='Nmap service detection',
-                                  port ='{0} running on port {1}/{2}. State: {3}'.format(found_port[3],
+                self.add_scan_log(scan_id, host=target,
+                                  name='Nmap service detection',
+                                  port='{0} running on port {1}/{2}. State: {3}'.format(found_port[3],
                                                                                         found_port[1],
                                                                                         found_port[0],
                                                                                         found_port[2]))
