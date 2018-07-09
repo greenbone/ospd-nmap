@@ -22,12 +22,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import xml.etree.ElementTree as ET
-import subprocess
-
 from ospd.ospd import OSPDaemon, OSPDError
 from ospd.misc import main as daemon_main
 from ospd_nmap import __version__
+import defusedxml.ElementTree as secET
+import subprocess
 
 OSPD_DESC = """
 This scanner runs the tool 'nmap' to scan the target hosts.
@@ -327,7 +326,7 @@ class OSPDnmap(OSPDaemon):
         if result is None:
             return False
 
-        tree = ET.fromstring(result)
+        tree = secET.fromstring(result)
 
         if tree.tag != 'nmaprun':
             return False
@@ -430,7 +429,7 @@ class OSPDnmap(OSPDaemon):
         ports = []
 
         # parse the output of the nmap command
-        tree = ET.fromstring(result)
+        tree = secET.fromstring(result)
         if tree.find("host/ports") is not None:
             for port in tree.find("host/ports"):
                 aux_list = []
