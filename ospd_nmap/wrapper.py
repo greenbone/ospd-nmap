@@ -31,7 +31,7 @@ import subprocess
 OSPD_DESC = """
 This scanner runs the tool 'nmap' to scan the target hosts.
 
-This tool is availble for most operating systems and identifies open ports,
+This tool is available for most operating systems and identifies open ports,
 probes the services, operating systems and even can run more sophisticated
 detection routines.
 
