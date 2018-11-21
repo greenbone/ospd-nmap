@@ -16,7 +16,7 @@ Then you can create scan tasks to use this scanner.
 Python 3 and later is supported.
 
 Beyond the [ospd base library](https://github.com/greenbone/ospd) and the
-`nmap` tool, `ospd-nmap` has no further dependecies.
+`nmap` tool, `ospd-nmap` has no further dependencies.
 
 There are no special installation aspects for this module beyond the general
 installation guide for ospd-based scanners.
