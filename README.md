@@ -2,6 +2,8 @@
 
 # ospd-nmap
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/greenbone/ospd-nmap/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/greenbone/ospd-nmap/?branch=master)
+
 This is an OSP server implementation to allow GVM to remotely control the
 `nmap` port scanner.
 
