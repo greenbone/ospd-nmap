@@ -404,7 +404,7 @@ class OSPDnmap(OSPDaemon):
         try:
             result = subprocess.check_output(command_str,
                                              stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             self.add_scan_error(
                 scan_id, host=target,
                 value="A problem occurred trying to execute 'nmap'."
