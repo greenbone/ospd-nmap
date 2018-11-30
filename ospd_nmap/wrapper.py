@@ -405,17 +405,25 @@ class OSPDnmap(OSPDaemon):
             result = subprocess.check_output(command_str,
                                              stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            self.add_scan_error(scan_id, host=target,
-              value="A problem occurred trying to execute 'nmap'.")
-            self.add_scan_error(scan_id, host=target,
-                                value="The result of 'nmap' was empty.")
+            self.add_scan_error(
+                scan_id, host=target,
+                value="A problem occurred trying to execute 'nmap'."
+            )
+            self.add_scan_error(
+                scan_id, host=target,
+                value="The result of 'nmap' was empty."
+            )
             return 2
 
         if result is None:
-            self.add_scan_error(scan_id, host=target,
-              value="A problem occurred trying to execute 'nmap'.")
-            self.add_scan_error(scan_id, host=target,
-                                value="The result of 'nmap' was empty.")
+            self.add_scan_error(
+                scan_id, host=target,
+                value="A problem occurred trying to execute 'nmap'."
+            )
+            self.add_scan_error(
+                scan_id, host=target,
+                value="The result of 'nmap' was empty."
+            )
             return 2
 
         # If "dump" was set to True, then create a log entry with the dump.
