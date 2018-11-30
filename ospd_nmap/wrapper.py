@@ -22,11 +22,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import subprocess
+
 from ospd.ospd import OSPDaemon, OSPDError
 from ospd.misc import main as daemon_main
 from ospd_nmap import __version__
 import defusedxml.ElementTree as secET
-import subprocess
 
 OSPD_DESC = """
 This scanner runs the tool 'nmap' to scan the target hosts.
@@ -44,62 +45,63 @@ to set OS detection, and to set timing and performance options.
 """
 
 OSDET_DIC = {
-    'Disable' : 'Disable',
-    'Enable' : '-O',
-    'Guess' : '--osscan-guess',
-    'Limit' : '--osscan-limit',
+    'Disable': 'Disable',
+    'Enable': '-O',
+    'Guess': '--osscan-guess',
+    'Limit': '--osscan-limit',
 }
 
 TIMING_DIC = {
-    'Disable':'Disable',
-    'Paranoid':'-T0',
-    'Sneaky':'-T1',
-    'Polite':'-T2',
-    'Normal':'-T3',
-    'Aggressive':'-T4',
-    'Insane':'-T5',
+    'Disable': 'Disable',
+    'Paranoid': '-T0',
+    'Sneaky': '-T1',
+    'Polite': '-T2',
+    'Normal': '-T3',
+    'Aggressive': '-T4',
+    'Insane': '-T5',
 }
 
 SCANTYPE_DIC = {
-    'Disable':'Disable',
-    'Connect()':'-sT',
-    'SYN':'-sS',
-    'ACK':'-sA',
-    'FIN':'-sF',
-    'Window':'-sW',
-    'Maimon':'-sM',
-    'Xmas tree':'-sX',
-    'Null':'-sN',
-    'Idle scan':'-sI',
+    'Disable': 'Disable',
+    'Connect()': '-sT',
+    'SYN': '-sS',
+    'ACK': '-sA',
+    'FIN': '-sF',
+    'Window': '-sW',
+    'Maimon': '-sM',
+    'Xmas tree': '-sX',
+    'Null': '-sN',
+    'Idle scan': '-sI',
 }
 
 SCTP_SCANTYPE_DIC = {
-    'Disable':'Disable',
-    'SCTP Init':'-sY',
-    'SCTP COOKIE_ECHO':'-sZ',
+    'Disable': 'Disable',
+    'SCTP Init': '-sY',
+    'SCTP COOKIE_ECHO': '-sZ',
 }
 
 BOOL_OPT_DIC = {
-    'allhoston':'-Pn',
-    'traceroute':'--traceroute',
-    'nodns':'-n',
-    'servscan':'-sV',
-    'fragmentip':'-f',
+    'allhoston': '-Pn',
+    'traceroute': '--traceroute',
+    'nodns': '-n',
+    'servscan': '-sV',
+    'fragmentip': '-f',
 }
 
 INT_OPT_DIC = {
-    'sourceport':'-g',
-    'minportpar':'--min-parallelism',
-    'maxportpar':'--max-parallelism',
-    'minhostpar':'--min-hostgroup',
-    'maxhostpar':'--max-hostgroup',
+    'sourceport': '-g',
+    'minportpar': '--min-parallelism',
+    'maxportpar': '--max-parallelism',
+    'minhostpar': '--min-hostgroup',
+    'maxhostpar': '--max-hostgroup',
 }
+
 TIME_OPT_DIC = {
-    'htimeout':'--host-timeout',
-    'minrtttimeout':'--min-rtt-timeout',
-    'maxrtttimeout':'--max-rtt-timeout',
-    'initrtttimeout':'--initial-rtt-timeout',
-    'interprobedelay':'--scan-delay',
+    'htimeout': '--host-timeout',
+    'minrtttimeout': '--min-rtt-timeout',
+    'maxrtttimeout': '--max-rtt-timeout',
+    'initrtttimeout': '--initial-rtt-timeout',
+    'interprobedelay': '--scan-delay',
 }
 
 OSDET_ARGS = [
@@ -151,139 +153,140 @@ OSPD_PARAMS = {
         'description': 'Whether to create a log result with the raw XML output of nmap.',
     },
     'allhoston': {
-        'type' : 'boolean',
+        'type': 'boolean',
         'name': 'All hosts as online',
         'default': 0,
         'mandatory': 0,
         'description': 'Treat all hosts as online.',
     },
     'traceroute': {
-        'type' : 'boolean',
+        'type': 'boolean',
         'name': 'Traceroute',
         'default': 0,
         'mandatory': 0,
         'description': 'Trace hop path to each host.',
     },
     'nodns': {
-        'type' : 'boolean',
+        'type': 'boolean',
         'name': 'DNS resolution',
         'default': 0,
         'mandatory': 0,
         'description': 'Disable DNS resolution.',
     },
     'servscan': {
-        'type' : 'boolean',
+        'type': 'boolean',
         'name': 'Service scan',
         'default': 1,
         'mandatory': 0,
         'description': 'Perform service/version detection scan.',
     },
     'fragmentip': {
-        'type' : 'boolean',
+        'type': 'boolean',
         'name': 'Fragment IP packets (bypasses firewalls)',
         'default': 0,
         'mandatory': 0,
         'description': 'Try ti evade defense by fragmenting IP packets.',
     },
     'sourceport': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Source port',
         'default': 0,
         'mandatory': 0,
         'description': 'Set source port.',
     },
     'htimeout': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Host Timeout (ms)',
         'default': 0,
         'mandatory': 0,
         'description': 'Give up on host after this time elapsed.',
     },
     'minrtttimeout': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Min RTT Timeout (ms)',
         'default': 0,
         'mandatory': 0,
         'description': 'Probe round trip time hint (minimal value).',
     },
     'maxrtttimeout': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Max RTT Timeout (ms)',
         'default': 0,
         'mandatory': 0,
         'description': 'Probe round trip time hint (maximal value).',
     },
     'initrtttimeout': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Initial RTT Timeout (ms)',
         'default': 0,
         'mandatory': 0,
         'description': 'Probe round trip time hint (initial value).',
     },
     'minportpar': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Ports scanned in parallel (min)',
         'default': 0,
         'mandatory': 0,
         'description': 'Force minimum number of parallel active probes.',
     },
     'maxportpar': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Ports scanned in parallel (max)',
         'default': 0,
         'mandatory': 0,
         'description': 'Force maximum number of parallel active probes.',
     },
     'minhostpar': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Hosts scanned in parallel (min)',
         'default': 0,
         'mandatory': 0,
         'description': 'Force minimum number of host to scan in parallel.',
     },
     'maxhostpar': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Hosts scanned in parallel (max)',
         'default': 0,
         'mandatory': 0,
         'description': 'Force maximum number of host to scan in parallel.',
     },
     'interprobedelay': {
-        'type' : 'integer',
+        'type': 'integer',
         'name': 'Minimum wait between probes (ms)',
         'default': 0,
         'mandatory': 0,
         'description': 'Set idle interval between probes.',
     },
     'timing': {
-        'type' : 'selection',
+        'type': 'selection',
         'name': 'Timing policy',
         'default': '|'.join(TIMING_ARGS),
         'mandatory': 0,
         'description': 'Add timing argument to the Nmap command.',
     },
     'osdet': {
-        'type' : 'selection',
+        'type': 'selection',
         'name': 'OS Detection',
         'default': '|'.join(OSDET_ARGS),
         'mandatory': 0,
         'description': 'Enable OS detection. Limit option limits OS detection to promising targets. Guess option guess OS more aggresively',
     },
     'scantype': {
-        'type' : 'selection',
+        'type': 'selection',
         'name': 'Scan type',
         'default': '|'.join(SCANTYPE_ARGS),
         'mandatory': 0,
         'description': 'Add the TCP scan type flag to the command line.',
     },
     'sctpscantype': {
-        'type' : 'selection',
+        'type': 'selection',
         'name': 'SCTP Scan type',
         'default': '|'.join(SCTP_SCANTYPE_ARGS),
         'mandatory': 0,
         'description': 'Add the SCTP scan type flag to the command line.',
     },
 }
+
 
 class OSPDnmap(OSPDaemon):
 
@@ -295,7 +298,7 @@ class OSPDnmap(OSPDaemon):
                                        cafile=cafile)
         self.server_version = __version__
         self.scanner_info['name'] = 'nmap'
-        self.scanner_info['version'] = '' # achieved during self.check()
+        self.scanner_info['version'] = ''  # achieved during self.check()
         self.scanner_info['description'] = OSPD_DESC
         for name, param in OSPD_PARAMS.items():
             self.add_scanner_param(name, param)
@@ -360,13 +363,13 @@ class OSPDnmap(OSPDaemon):
         if 'U' in ports:
             command_str.append('-sU')
 
-        ## Add all enabled options
-        ### All boole options
+        # Add all enabled options
+        # All boole options
         for opt in ('allhoston', 'traceroute', 'nodns', 'servscan', 'fragmentip',):
             if options.get(opt):
                 command_str.append(BOOL_OPT_DIC[opt])
 
-        ### Add all selection options
+        # Add all selection options
         if timingpolicy != 'Disable':
             command_str.append(TIMING_DIC[timingpolicy])
 
@@ -381,21 +384,21 @@ class OSPDnmap(OSPDaemon):
             if os_detection != 'Enable':
                 command_str.append(OSDET_DIC[os_detection])
 
-        ### Add all integer options
+        # Add all integer options
         for opt in ('minportpar', 'maxportpar', 'minhostpar', 'sourceport', 'maxhostpar',):
             if options.get(opt) != 0:
                 command_str.append(str(INT_OPT_DIC[opt]))
                 command_str.append(str(options.get(opt)))
 
-                ### Add all integer options
+                # Add all integer options
         for opt in ('htimeout', 'minrtttimeout', 'maxrtttimeout', 'initrtttimeout',
                     'interprobedelay',):
             if options.get(opt) != 0:
-                #for elem in []
+                # for elem in []
                 command_str.append(str(TIME_OPT_DIC[opt]))
                 command_str.append(str(options.get(opt))+'ms')
 
-        ### Add port list and target to nmap command string.
+        # Add port list and target to nmap command string.
         for elem in ['-p %s' % ports, target]:
             command_str.append(elem)
 
@@ -404,18 +407,26 @@ class OSPDnmap(OSPDaemon):
         try:
             result = subprocess.check_output(command_str,
                                              stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            self.add_scan_error(scan_id, host=target,
-              value="A problem occurred trying to execute 'nmap'.")
-            self.add_scan_error(scan_id, host=target,
-                                value="The result of 'nmap' was empty.")
+        except subprocess.CalledProcessError:
+            self.add_scan_error(
+                scan_id, host=target,
+                value="A problem occurred trying to execute 'nmap'."
+            )
+            self.add_scan_error(
+                scan_id, host=target,
+                value="The result of 'nmap' was empty."
+            )
             return 2
 
         if result is None:
-            self.add_scan_error(scan_id, host=target,
-              value="A problem occurred trying to execute 'nmap'.")
-            self.add_scan_error(scan_id, host=target,
-                                value="The result of 'nmap' was empty.")
+            self.add_scan_error(
+                scan_id, host=target,
+                value="A problem occurred trying to execute 'nmap'."
+            )
+            self.add_scan_error(
+                scan_id, host=target,
+                value="The result of 'nmap' was empty."
+            )
             return 2
 
         # If "dump" was set to True, then create a log entry with the dump.
@@ -447,7 +458,7 @@ class OSPDnmap(OSPDaemon):
                     ports.append(aux_list)
                     if aux_list[0] == 'tcp' and aux_list[2] != 'closed':
                         tcp_ports.append(aux_list[1])
-                    elif aux_list[0] == 'udp'  and aux_list[2] != 'closed':
+                    elif aux_list[0] == 'udp' and aux_list[2] != 'closed':
                         udp_ports.append(aux_list[1])
 
         # Create a general log entry about executing nmap
@@ -518,6 +529,7 @@ class OSPDnmap(OSPDaemon):
             self.add_scan_host_detail(scan_id, host=target, name="udp_ports",
                                       value=", ".join(udp_ports))
         return 1
+
 
 def main():
     """ OSP nmap main function. """
