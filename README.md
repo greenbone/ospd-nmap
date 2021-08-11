@@ -1,5 +1,7 @@
 ![Greenbone Logo](https://www.greenbone.net/wp-content/uploads/gb_logo_resilience_horizontal.png)
 
+:warning: This repository is unmaintained and will not get any further changes!
+
 # ospd-nmap
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/greenbone/ospd-nmap/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/greenbone/ospd-nmap/?branch=master)
